@@ -56,7 +56,10 @@ export default defineConfig(async () => {
       ...(isCodexSeatbeltSandbox ? { watch: { useFsEvents: false, usePolling: true } } : {}),
     },
     plugins: [
-      vinext(),
+      // Vercel serves the generated static site from dist/client. Pre-render
+      // the App Router routes so that directory contains HTML for `/` and
+      // every public URL instead of only client assets.
+      vinext({ prerender: true }),
       sites({ mockAuth: !managedLinux }),
       cloudflare({
         viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
