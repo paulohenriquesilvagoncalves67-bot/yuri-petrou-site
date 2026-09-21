@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
-import { ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
-
 import { type Locale, route, tr } from '@/data/site';
 import { WhatsAppButton } from '@/components/site/links';
+import { SiteArrow } from '@/components/site/site-arrow';
 
 const scenes = [
   {
@@ -160,19 +159,19 @@ export function HeroCarousel({ l }: { l: Locale }) {
           <p className="yp-description">{scene.copy[language]}</p>
         </div>
         <div className="yp-actions">
-          <a className="button light" href={route(l, scene.destination)}>{scene.action[language]}<ArrowRight size={18} /></a>
+          <a className="button light" href={route(l, scene.destination)}>{scene.action[language]}<SiteArrow /></a>
           <WhatsAppButton l={l} className="hero-link" />
         </div>
       </div>
       <div className="yp-bottom">
-        <a className="yp-discover" href="#selecionados"><ArrowDown size={18} />{tr(l, 'Descubra seu próximo capítulo', 'Discover your next chapter')}</a>
+        <a className="yp-discover" href="#selecionados"><SiteArrow direction="down" />{tr(l, 'Descubra seu próximo capítulo', 'Discover your next chapter')}</a>
         <div className="yp-navigation">
           <span className="yp-place">Armação dos Búzios · RJ</span>
           <div className="yp-controls">
-            <button type="button" onClick={() => api?.scrollPrev()} aria-label={tr(l, 'Foto anterior', 'Previous photo')}><ArrowLeft size={20} /></button>
+            <button type="button" onClick={() => api?.scrollPrev()} aria-label={tr(l, 'Foto anterior', 'Previous photo')}><SiteArrow direction="left" /></button>
             <span className="yp-counter" aria-live="polite" aria-atomic="true">{String(active + 1).padStart(2, '0')} / 03</span>
             <div className="yp-progress" aria-hidden="true"><span style={{ transform: `translateX(${active * 100}%)` }} /></div>
-            <button type="button" onClick={() => api?.scrollNext()} aria-label={tr(l, 'Próxima foto', 'Next photo')}><ArrowRight size={20} /></button>
+            <button type="button" onClick={() => api?.scrollNext()} aria-label={tr(l, 'Próxima foto', 'Next photo')}><SiteArrow /></button>
           </div>
         </div>
       </div>
