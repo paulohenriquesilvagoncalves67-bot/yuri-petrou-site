@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
 
 import { type Locale, route, tr } from '@/data/site';
 import { WhatsAppButton } from '@/components/site/links';
@@ -160,7 +160,7 @@ export function HeroCarousel({ l }: { l: Locale }) {
           <p className="yp-description">{scene.copy[language]}</p>
         </div>
         <div className="yp-actions">
-          <a className="button light" href={route(l, scene.destination)}>{scene.action[language]}<ArrowUpRight size={18} /></a>
+          <a className="button light" href={route(l, scene.destination)}>{scene.action[language]}<ArrowRight size={18} /></a>
           <WhatsAppButton l={l} className="hero-link" />
         </div>
       </div>
