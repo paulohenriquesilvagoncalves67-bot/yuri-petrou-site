@@ -45,6 +45,7 @@
   .real-intro-price strong { font-size: 27px; }
   .real-gallery { margin: 0; }
   .real-gallery-stage { height: auto; min-height: 0; aspect-ratio: 3 / 4; }
+  .real-gallery--landscape .real-gallery-stage { aspect-ratio: 3 / 2; }
   .real-gallery-controls { gap: 13px; }
   .real-gallery-controls button { width: 42px; height: 42px; }
   .real-gallery-thumbs { padding: 9px var(--space) 16px; }

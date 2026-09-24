@@ -1,0 +1,75 @@
+import type { Property } from './properties';
+
+const image = (number: number, vertical = false) =>
+  `/images/casa-condominio-buzios/casa-condominio-buzios-${String(number).padStart(2, '0')}${vertical ? '-vertical' : ''}.webp`;
+
+export const condominiumProperty: Property = {
+  id: 'casa-condominio-buzios-200',
+  slug: 'casa-nova-condominio-armacao-dos-buzios',
+  title: {
+    pt: 'Casa nova em condomínio em Búzios',
+    en: 'New home in a Búzios condominium',
+  },
+  purpose: 'sale',
+  propertyType: 'house',
+  region: '',
+  location: { pt: 'Armação dos Búzios', en: 'Armação dos Búzios' },
+  price: 1500000,
+  showPrice: true,
+  bedrooms: 4,
+  suites: 4,
+  builtArea: 200,
+  landArea: 465,
+  description: {
+    pt: 'Uma casa nova para viver Búzios com conforto, privacidade e espaço para receber. Em condomínio de alto padrão, a residência reúne arquitetura colonial contemporânea, pé-direito alto e ambientes integrados que aproveitam a luz natural e a ventilação. São 200 m² de área construída em um terreno de 465 m².\n\nAs quatro suítes se distribuem entre os dois pavimentos: duas no térreo e duas no piso superior. A cozinha se integra à sala em dois ambientes. A casa conta ainda com lavabo com box blindex.\n\nDo lado de fora, a área gourmet reúne churrasqueira, cooktop de duas bocas e sofá externo. Piscina, gramado e árvores frutíferas compõem o lazer privativo, somado à área de lazer do condomínio.\n\nVenda porteira fechada, com possibilidade de financiamento bancário. Uma opção para morar ou investir em locação de temporada. Entre em contato para agendar sua visita.',
+    en: 'A new home for enjoying Búzios with comfort, privacy and room to entertain. Set in an upscale condominium, it combines contemporary colonial architecture, high ceilings and connected spaces filled with natural light and fresh air. The home has 200 m² of built area on a 465 m² plot.\n\nFour suites are split between two floors: two on the ground floor and two upstairs. The kitchen opens onto a two-part living area. The owner also describes a powder room with a glass shower enclosure.\n\nOutside, the gourmet area includes a barbecue, a two-burner cooktop and an outdoor sofa. A private pool, lawn and fruit trees complement the condominium leisure facilities.\n\nSold fully furnished and equipped. Bank financing is accepted. Suitable as a residence or a holiday-rental investment. Get in touch to arrange a viewing.',
+  },
+  shortDescription: {
+    pt: 'Quatro suítes, piscina e área gourmet. Porteira fechada, com financiamento aceito.',
+    en: 'Four suites, pool and outdoor kitchen. Fully furnished; bank financing accepted.',
+  },
+  amenities: {
+    pt: [
+      '4 suítes: 2 térreas e 2 no piso superior',
+      'Sala em dois ambientes',
+      'Cozinha integrada',
+      'Pé-direito alto',
+      'Lavabo com box blindex',
+      'Área gourmet com churrasqueira',
+      'Cooktop de 2 bocas',
+      'Sofá externo',
+      'Piscina privativa',
+      'Gramado com árvores frutíferas',
+      'Lazer no condomínio',
+      'Venda porteira fechada',
+      'Aceita financiamento bancário',
+    ],
+    en: [
+      '4 suites: 2 downstairs and 2 upstairs',
+      'Two-part living area',
+      'Integrated kitchen',
+      'High ceilings',
+      'Powder room with glass shower enclosure',
+      'Outdoor kitchen with barbecue',
+      'Two-burner cooktop',
+      'Outdoor sofa',
+      'Private pool',
+      'Lawn with fruit trees',
+      'Condominium leisure facilities',
+      'Sold fully furnished and equipped',
+      'Bank financing accepted',
+    ],
+  },
+  coverImage: image(1),
+  images: [
+    image(1), image(2), image(3), image(4), image(5), image(6, true),
+    image(7), image(8, true), image(9, true), image(10, true),
+    image(11, true), image(12, true), image(13), image(14),
+    image(15), image(16), image(17, true), image(18, true), image(19, true),
+  ],
+  galleryLayout: 'mixed',
+  featured: true,
+  status: 'available',
+  seoTitle: 'Casa nova em condomínio à venda em Armação dos Búzios',
+  seoDescription: 'Casa nova em condomínio em Armação dos Búzios: 200 m² construídos, terreno de 465 m², 4 suítes, piscina. Porteira fechada por R$ 1.500.000; aceita financiamento.',
+};

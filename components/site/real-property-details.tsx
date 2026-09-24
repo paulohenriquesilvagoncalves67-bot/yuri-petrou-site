@@ -38,7 +38,7 @@ export function RealPropertyDetails({ p, l }: { p: Property; l: Locale }) {
         </div>
       </div>
 
-      <div className="real-gallery" aria-label={tr(l, 'Fotos da residência', 'Photos of the home')}>
+      <div className={`real-gallery ${p.galleryLayout === 'mixed' && !p.images[index].includes('-vertical.') ? 'real-gallery--landscape' : ''}`} aria-label={tr(l, 'Fotos da residência', 'Photos of the home')}>
         <div className="real-gallery-stage">
           <Image
             key={p.images[index]}
@@ -87,10 +87,11 @@ export function RealPropertyDetails({ p, l }: { p: Property; l: Locale }) {
         </div>
         <aside className="real-facts">
           <p className="eyebrow">{tr(l, 'EM NÚMEROS', 'AT A GLANCE')}</p>
-          <div><strong>202 m²</strong><span>{tr(l, 'área construída', 'built area')}</span></div>
-          <div><strong>450 m²</strong><span>{tr(l, 'terreno', 'plot')}</span></div>
-          <div><strong>04</strong><span>{tr(l, 'quartos', 'bedrooms')}</span></div>
-          <div><strong>03</strong><span>{tr(l, 'vagas', 'parking spaces')}</span></div>
+          {p.builtArea && <div><strong>{p.builtArea} m²</strong><span>{tr(l, 'área construída', 'built area')}</span></div>}
+          <div><strong>{p.landArea} m²</strong><span>{tr(l, 'terreno', 'plot')}</span></div>
+          {p.bedrooms && <div><strong>{String(p.bedrooms).padStart(2, '0')}</strong><span>{tr(l, 'quartos', 'bedrooms')}</span></div>}
+          {p.suites && <div><strong>{String(p.suites).padStart(2, '0')}</strong><span>{tr(l, 'suítes', 'suites')}</span></div>}
+          {p.parkingSpaces && <div><strong>{String(p.parkingSpaces).padStart(2, '0')}</strong><span>{tr(l, 'vagas', 'parking spaces')}</span></div>}
           <div className="real-facts-cta">
             <span>{tr(l, 'VENDA PORTEIRA FECHADA', 'FULLY FURNISHED SALE')}</span>
             <strong>{priceText(p, l)}</strong>
