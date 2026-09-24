@@ -1,5 +1,5 @@
 // TODO: inserir contatos oficiais, logomarca, biografia e IDs aprovados pelo Yuri.
-export const config = { brand:'Yuri Petrou', whatsapp:'', instagram:'', email:'', address:'', gaId:'', metaPixelId:'', lineupUrl:'https://lineup-site-mu.vercel.app', origin:'https://yuri-petrou-buzios.paulohenriquesilvago.chatgpt.site', demo:true, hero:'/images/buzios.webp', portrait:'' };
+export const config = { brand:'Yuri Petrou', whatsapp:'', instagram:'', email:'', address:'', gaId:'', metaPixelId:'', lineupUrl:'https://lineup-site-mu.vercel.app', origin:'https://yuri-petrou-site.vercel.app', demo:true, hero:'/images/buzios.webp', portrait:'' };
 export type Locale='pt'|'en';
 export const tr=(l:Locale,pt:string,en:string)=>l==='en'?en:pt;
 export const regions=[{slug:'geriba',name:'Geribá'},{slug:'joao-fernandes',name:'João Fernandes'},{slug:'ferradura',name:'Ferradura'},{slug:'manguinhos',name:'Manguinhos'},{slug:'praia-brava',name:'Praia Brava'},{slug:'centro',name:'Centro'}];

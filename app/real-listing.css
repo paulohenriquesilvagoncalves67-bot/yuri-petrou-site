@@ -1,0 +1,55 @@
+.real-listing { background: #faf7f1; }
+.real-listing-inner { max-width: 1600px; margin: 0 auto; padding-left: var(--space); padding-right: var(--space); }
+.real-back { display: inline-flex; align-items: center; gap: 12px; margin: 136px 0 35px; font-size: 12px; letter-spacing: .11em; text-transform: uppercase; color: #394758; }
+.real-back .site-arrow { width: 26px; }
+.real-intro { display: flex; justify-content: space-between; align-items: end; gap: 50px; padding-bottom: 42px; }
+.real-intro .eyebrow { color: #a7803f; margin-bottom: 16px; }
+.real-intro h1 { max-width: 850px; font-size: clamp(45px, 6vw, 83px); line-height: 1.02; color: #071d33; }
+.real-intro-copy { max-width: 620px; margin-top: 23px; font-size: 17px; }
+.real-intro-price { flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-end; padding-bottom: 4px; }
+.real-intro-price span, .real-facts-cta>span { font-size: 10px; letter-spacing: .15em; color: #a7803f; }
+.real-intro-price strong { font-family: var(--serif); font-size: 32px; font-weight: 400; color: #071d33; }
+.real-gallery { margin: 0 var(--space); }
+.real-gallery-stage { position: relative; height: min(77vh, 770px); min-height: 520px; background: #071d33; }
+.real-gallery-main { object-fit: contain; }
+.real-gallery-controls { position: absolute; right: 0; bottom: 0; z-index: 1; display: flex; align-items: center; gap: 20px; padding: 10px; background: #071d33; color: #f5f0e7; font-size: 12px; letter-spacing: .1em; }
+.real-gallery-controls button { width: 48px; height: 48px; display: grid; place-items: center; border: 1px solid #b89552; }
+.real-gallery-controls button:hover { background: #b89552; color: #071d33; }
+.real-gallery-controls .site-arrow { width: 25px; }
+.real-gallery-thumbs { display: flex; gap: 8px; overflow-x: auto; padding: 12px 0 16px; scrollbar-color: #b89552 #e7dfd1; }
+.real-gallery-thumbs button { position: relative; flex: 0 0 96px; width: 96px; height: 112px; background: #071d33; border: 2px solid transparent; opacity: .7; }
+.real-gallery-thumbs button.is-active { border-color: #b89552; opacity: 1; }
+.real-gallery-thumbs button img { object-fit: cover; }
+.real-content { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(310px, .7fr); gap: clamp(60px, 10vw, 170px); padding-top: 80px; padding-bottom: 110px; }
+.real-content .eyebrow { color: #a7803f; }
+.real-content h2 { max-width: 670px; color: #071d33; }
+.real-description { max-width: 700px; margin-top: 30px; }
+.real-description p { margin: 0 0 22px; color: #394758; line-height: 1.85; }
+.real-content h3 { margin: 48px 0 22px; color: #071d33; }
+.real-amenities { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 25px; padding: 0; list-style: none; }
+.real-amenities li { border-top: 1px solid #d8cfbf; padding: 12px 0; font-size: 14px; color: #394758; }
+.real-facts { align-self: start; background: #071d33; padding: 36px; color: #f5f0e7; }
+.real-facts>div:not(.real-facts-cta) { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; border-top: 1px solid #ffffff33; padding: 15px 0; }
+.real-facts>div>strong { font-family: var(--serif); font-weight: 400; font-size: 31px; color: #f5f0e7; white-space: nowrap; }
+.real-facts>div>span { font-size: 12px; color: #d4d9df; text-align: right; }
+.real-facts-cta { display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #b89552; padding-top: 26px; margin-top: 18px; }
+.real-facts-cta>strong { font-family: var(--serif); font-size: 33px; font-weight: 400; }
+.real-facts-cta .button { margin-top: 15px; justify-content: space-between; background: #b89552; border-color: #b89552; color: #071d33; }
+.real-facts-cta .button:hover { background: #cfb477; }
+@media (max-width: 760px) {
+  .real-back { margin-top: 112px; margin-bottom: 29px; }
+  .real-intro { display: block; padding-bottom: 30px; }
+  .real-intro h1 { font-size: clamp(43px, 11vw, 60px); }
+  .real-intro-copy { margin-top: 15px; font-size: 15px; }
+  .real-intro-price { align-items: flex-start; margin-top: 27px; }
+  .real-intro-price strong { font-size: 27px; }
+  .real-gallery { margin: 0; }
+  .real-gallery-stage { height: auto; min-height: 0; aspect-ratio: 3 / 4; }
+  .real-gallery-controls { gap: 13px; }
+  .real-gallery-controls button { width: 42px; height: 42px; }
+  .real-gallery-thumbs { padding: 9px var(--space) 16px; }
+  .real-gallery-thumbs button { flex-basis: 76px; width: 76px; height: 91px; }
+  .real-content { display: flex; flex-direction: column; gap: 42px; padding-top: 60px; padding-bottom: 80px; }
+  .real-amenities { grid-template-columns: 1fr; }
+  .real-facts { padding: 29px; width: 100%; }
+}
