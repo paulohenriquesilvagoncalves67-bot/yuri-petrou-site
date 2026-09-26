@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import {Plus} from 'lucide-react';
 import {requireProfile} from '@/lib/supabase/auth';
 import {serverClient} from '@/lib/supabase/server';
 import {supabaseConfigured} from '@/lib/supabase/config';
@@ -37,7 +38,7 @@ export default async function PropertiesPage({searchParams}:{searchParams:Promis
   return <>
     <AdminNav admin={profile.role==='admin'} name={profile.name||profile.email}/>
     <main className="admin-main">
-      <div className="admin-heading"><div><p className="admin-kicker">PORTFÓLIO</p><h1>Imóveis</h1></div><Link className="admin-button" href="/admin/imoveis/novo">+ Novo imóvel</Link></div>
+      <div className="admin-heading"><div><p className="admin-kicker">PORTFÓLIO</p><h1>Imóveis</h1></div><Link className="admin-button" href="/admin/imoveis/novo"><Plus size={18} strokeWidth={2} aria-hidden="true"/><span>Novo imóvel</span></Link></div>
       {error&&<p role="alert" className="admin-error">Não foi possível carregar os imóveis: {error.message}</p>}
       <div className="admin-stats">
         <div><strong>{counts[0]}</strong><span>Publicados</span></div>
