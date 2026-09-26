@@ -1,1 +1,1 @@
-import {config} from '@/data/site';export default function robots(){return {rules:{userAgent:'*',...(config.demo?{disallow:'/'}:{allow:'/'})},sitemap:config.origin+'/sitemap.xml'}}
+import {config} from '@/data/site';import {supabaseConfigured} from '@/lib/supabase/config';export default function robots(){return {rules:{userAgent:'*',...(config.demo&&!supabaseConfigured?{disallow:'/'}:{allow:'/',disallow:'/admin/'})},sitemap:config.origin+'/sitemap.xml'}}

@@ -3,8 +3,7 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import type { Property } from '@/data/properties';
-import { type Locale, route, tr } from '@/data/site';
-import { priceText } from '@/data/properties';
+import { type Locale, route, tr, words } from '@/data/site';
 import { SiteArrow } from './site-arrow';
 import { track } from './links';
 
@@ -27,14 +26,11 @@ export function RealPropertyDetails({ p, l }: { p: Property; l: Locale }) {
         </a>
         <div className="real-intro">
           <div>
-            <p className="eyebrow">{tr(l, 'RESIDÊNCIA À VENDA', 'HOME FOR SALE')} · {location.toUpperCase()}</p>
+            <p className="eyebrow">{words[l][p.purpose].toUpperCase()} · {location.toUpperCase()}</p>
             <h1>{p.title[l]}</h1>
             <p className="real-intro-copy">{p.shortDescription[l]}</p>
           </div>
-          <div className="real-intro-price">
-            <span>{tr(l, 'VENDA PORTEIRA FECHADA', 'FULLY FURNISHED SALE')}</span>
-            <strong>{priceText(p, l)}</strong>
-          </div>
+
         </div>
       </div>
 
@@ -43,11 +39,12 @@ export function RealPropertyDetails({ p, l }: { p: Property; l: Locale }) {
           <Image
             key={p.images[index]}
             src={p.images[index]}
-            alt={`${p.title[l]} — ${tr(l, 'foto', 'photo')} ${index + 1} ${tr(l, 'de', 'of')} ${count}`}
+            alt={p.imageAltTexts?.[index]||`${p.title[l]} — ${tr(l, 'foto', 'photo')} ${index + 1} ${tr(l, 'de', 'of')} ${count}`}
             fill
             sizes="(max-width: 760px) 100vw, 85vw"
             className="real-gallery-main"
             priority={index === 0}
+            unoptimized={p.images[index].startsWith('http')}
           />
           <div className="real-gallery-controls">
             <button type="button" onClick={() => changeImage(index - 1)} aria-label={tr(l, 'Foto anterior', 'Previous photo')}>
@@ -69,7 +66,7 @@ export function RealPropertyDetails({ p, l }: { p: Property; l: Locale }) {
               aria-label={`${tr(l, 'Ver foto', 'View photo')} ${photoIndex + 1}`}
               aria-current={photoIndex === index ? 'true' : undefined}
             >
-              <Image src={src.replace('.webp', '-small.webp')} alt="" fill sizes="96px" />
+              <Image src={p.imageThumbnails?.[photoIndex]||src.replace('.webp', '-small.webp')} alt="" fill sizes="96px" unoptimized={src.startsWith('http')} />
             </button>
           ))}
         </div>
@@ -88,13 +85,13 @@ export function RealPropertyDetails({ p, l }: { p: Property; l: Locale }) {
         <aside className="real-facts">
           <p className="eyebrow">{tr(l, 'EM NÚMEROS', 'AT A GLANCE')}</p>
           {p.builtArea && <div><strong>{p.builtArea} m²</strong><span>{tr(l, 'área construída', 'built area')}</span></div>}
-          <div><strong>{p.landArea} m²</strong><span>{tr(l, 'terreno', 'plot')}</span></div>
+          {!!p.landArea && <div><strong>{p.landArea} m²</strong><span>{tr(l, 'terreno', 'plot')}</span></div>}
           {p.bedrooms && <div><strong>{String(p.bedrooms).padStart(2, '0')}</strong><span>{tr(l, 'quartos', 'bedrooms')}</span></div>}
           {p.suites && <div><strong>{String(p.suites).padStart(2, '0')}</strong><span>{tr(l, 'suítes', 'suites')}</span></div>}
           {p.parkingSpaces && <div><strong>{String(p.parkingSpaces).padStart(2, '0')}</strong><span>{tr(l, 'vagas', 'parking spaces')}</span></div>}
           <div className="real-facts-cta">
-            <span>{tr(l, 'VENDA PORTEIRA FECHADA', 'FULLY FURNISHED SALE')}</span>
-            <strong>{priceText(p, l)}</strong>
+            <span>{words[l][p.purpose].toUpperCase()}</span>
+
             <a className="button" href={route(l, 'contato')}>
               {tr(l, 'Conhecer esta casa', 'Enquire about this home')}<SiteArrow />
             </a>

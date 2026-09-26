@@ -71,5 +71,5 @@ export const condominiumProperty: Property = {
   featured: true,
   status: 'available',
   seoTitle: 'Casa nova em condomínio à venda em Armação dos Búzios',
-  seoDescription: 'Casa nova em condomínio em Armação dos Búzios: 200 m² construídos, terreno de 465 m², 4 suítes, piscina. Porteira fechada por R$ 1.500.000; aceita financiamento.',
+  seoDescription: 'Casa nova em condomínio em Armação dos Búzios: 200 m² construídos, terreno de 465 m², 4 suítes, piscina e venda porteira fechada. Aceita financiamento.',
 };

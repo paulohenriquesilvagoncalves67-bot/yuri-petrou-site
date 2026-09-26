@@ -54,5 +54,5 @@ export const realProperty: Property = {
   featured: true,
   status: 'available',
   seoTitle: 'Residência contemporânea à venda em Armação dos Búzios',
-  seoDescription: 'Casa de alto padrão com 202 m² construídos, terreno de 450 m², 4 quartos, piscina, jacuzzi e venda porteira fechada por R$ 2.790.000.',
+  seoDescription: 'Casa de alto padrão com 202 m² construídos, terreno de 450 m², 4 quartos, piscina, jacuzzi e venda porteira fechada em Búzios.',
 };
