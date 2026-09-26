@@ -2,12 +2,20 @@
 
 Projeto exclusivo criado para Yuri: `yuri-petrou` (`arjffszvxirqkhuycvqw`), na organização `backend Yuri Petrou`, região `sa-east-1`. O SQL inicial foi aplicado em 26/09/2026. Nunca reutilize o `lineup-interno`.
 
-## Ativar
+## Estado atual
 
-1. Em **Auth > Providers > Email**, desative cadastro público (Allow new users to sign up). Configure SMTP próprio antes de depender de convites em produção. Em projetos Free novos com o envio padrão, a personalização de modelos de e-mail não está disponível.
-2. Em **Auth > URL Configuration**, informe a URL pública do site e adicione `https://SEU-DOMINIO/admin/definir-senha` aos Redirect URLs (também a URL local se for testar localmente). O convite padrão do Supabase envia a sessão no fragmento da URL; a página de definição de senha agora a recebe no navegador. Se configurar SMTP próprio e personalizar o modelo, também é possível enviar `token_hash` para essa mesma página.
-3. [setup.sql](./setup.sql) **já foi aplicado** somente no projeto novo. Ele criou `profiles`, `properties`, `property_images`, `property_activity`, a visão pública limitada `published_properties`, índices, triggers, RLS e o bucket privado `property-images`. Não execute novamente nem aplique sobre outro projeto.
-4. Em **Auth > Users**, crie seu usuário admin pelo e-mail. Copie o UUID gerado. Execute no SQL Editor, substituindo o UUID:
+- Cadastro público desativado em **Auth > Providers**. E-mail confirmado continua exigido.
+- URL pública e redirects de definição de senha configurados para produção e localhost.
+- Primeiro perfil `admin` (`paulohenriquesilvagoncalves67@gmail.com`) criado e aprovado. O próprio Paulo deve definir a senha pelo link enviado por e-mail.
+- As duas propriedades reais e suas 38 fotos foram importadas e publicadas; os anúncios demonstrativos não foram importados.
+- As três variáveis de ambiente abaixo foram configuradas no projeto Vercel `yuri-petrou`, apenas em Production. A chave secreta foi salva como Secret.
+
+## Configuração e manutenção
+
+1. Configure SMTP próprio antes de depender de convites em produção. Em projetos Free novos com o envio padrão, a personalização de modelos de e-mail não está disponível.
+2. Se o domínio mudar, atualize **Auth > URL Configuration** e os Redirect URLs para `/admin/definir-senha`. O convite padrão do Supabase envia a sessão no fragmento da URL; a página de definição de senha a recebe no navegador.
+3. [setup.sql](./setup.sql) **já foi aplicado** somente no projeto novo. Ele criou `profiles`, `properties`, `property_images`, `property_activity`, a projeção pública limitada `published_properties`, índices, triggers, RLS e o bucket privado `property-images`. Não execute novamente nem aplique sobre outro projeto.
+4. Para criar outro administrador no futuro, use **Auth > Users** e promova o perfil criado pelo trigger, substituindo o UUID:
 
    ```sql
    update public.profiles set role='admin', approved=true
@@ -16,8 +24,8 @@ Projeto exclusivo criado para Yuri: `yuri-petrou` (`arjffszvxirqkhuycvqw`), na o
 
    Confirme que exatamente uma linha foi atualizada. O perfil é criado pelo trigger de `auth.users`.
 5. Copie `.env.example` para `.env.local` e preencha `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` e `SUPABASE_SECRET_KEY`. A chave secreta **nunca** deve ter prefixo `NEXT_PUBLIC_` nem ser enviada ao Git.
-6. No Vercel, crie as mesmas três variáveis para Production (e Preview, se necessário) e faça um novo deploy. O site continua funcionando com o catálogo legado somente enquanto as variáveis públicas não forem configuradas. Assim que forem, ele passa a ler exclusivamente o Supabase. Imóveis novos aparecem sem deploy.
-7. Opcional: para importar as **duas propriedades reais** do código, configure `YURI_ADMIN_USER_ID` apenas no ambiente local e execute `node scripts/import-real-properties.mjs` na raiz. O script não importa os dez anúncios demonstrativos. Ele cria imóveis em revisão; abra `/admin/revisao`, confira e publique individualmente. Os arquivos locais permanecem intactos.
+6. No Vercel, as mesmas três variáveis já estão em Production. Configure também em Preview apenas se precisar testar prévias. O catálogo público lê exclusivamente o Supabase e novos imóveis aparecem sem deploy.
+7. O script `node scripts/import-real-properties.mjs` foi usado para a importação inicial e pode ser repetido sem duplicar imagens. Ele não importa os dez anúncios demonstrativos. Os arquivos locais permanecem intactos.
 8. Entre em `/admin/login`. Em `/admin/usuarios`, convide Yuri pelo e-mail. Após o convite e a definição de senha, aprove o perfil dele nessa tela. Ele entra em `/admin/imoveis`, sem acesso a revisão ou usuários.
 
 ## Variáveis
@@ -37,4 +45,4 @@ Projeto exclusivo criado para Yuri: `yuri-petrou` (`arjffszvxirqkhuycvqw`), na o
 4. Yuri marca o imóvel como inativo/vendido/alugado; confirme sua retirada da Home, busca e sitemap. Admin restaura a situação para disponível.
 5. Tente, com o usuário colaborador, mudar `role`, `approved`, `featured` ou `publication_status` para `published` diretamente pela API. As políticas e triggers devem negar a alteração. Teste também edição de outro imóvel e upload em ID alheio.
 
-Sem o projeto Supabase e credenciais reais, login, upload, e políticas não podem ser validados ponta a ponta aqui. Revise o SQL em ambiente de desenvolvimento antes de ativar produção.
+O build, o catálogo público, as fotos, a página individual e o redirecionamento de rotas protegidas foram verificados em produção. O fluxo autenticado de criação e aprovação de um terceiro imóvel ainda depende de Paulo definir a senha e Yuri receber o convite; faça o teste acima antes do uso cotidiano.
