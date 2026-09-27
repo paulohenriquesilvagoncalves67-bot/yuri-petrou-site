@@ -160,11 +160,8 @@ begin
     end if;
   end if;
   if new.publication_status in ('pending_review','published') then
-    if length(trim(new.title))<3 or length(trim(new.description))<30 or length(trim(new.city))<2 then
-      raise exception 'Title, description and city are required for review';
-    end if;
-    if not exists(select 1 from public.property_images where property_id=new.id and is_cover) then
-      raise exception 'A cover image is required for review';
+    if length(trim(new.title))<3 or length(trim(new.city))<2 then
+      raise exception 'Title and city are required for review';
     end if;
   end if;
   if new.publication_status='published' then

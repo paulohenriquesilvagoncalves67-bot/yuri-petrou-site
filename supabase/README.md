@@ -28,6 +28,10 @@ Projeto exclusivo criado para Yuri: `yuri-petrou` (`arjffszvxirqkhuycvqw`), na o
 7. O script `node scripts/import-real-properties.mjs` foi usado para a importação inicial e pode ser repetido sem duplicar imagens. Ele não importa os dez anúncios demonstrativos. Os arquivos locais permanecem intactos.
 8. Entre em `/admin/login`. Em `/admin/usuarios`, convide Yuri pelo e-mail. Após o convite e a definição de senha, aprove o perfil dele nessa tela. Ele entra em `/admin/imoveis`, sem acesso a revisão ou usuários.
 
+## Ajuste temporário — 27/09/2026
+
+Foi aplicada no projeto de produção a migração `allow_review_without_description_or_cover`: envio para revisão/publicação não exige mais descrição com 30 caracteres nem foto de capa. Continuam exigidos título (mínimo de 3 caracteres) e cidade (mínimo de 2), além das verificações de autenticação, aprovação, autoria e demais campos administrativos. A mesma regra está refletida em [setup.sql](./setup.sql) para referência; não reexecute o setup inicial.
+
 ## Variáveis
 
 | Nome | Onde | Função |
