@@ -50,7 +50,7 @@ export default async function PropertiesPage({searchParams}:{searchParams:Promis
       <div className="admin-list">{items.map(p=><article key={p.id} className="admin-row">
         {covers.get(p.id)&&<img className="admin-row-cover" src={covers.get(p.id)} alt={`Capa de ${p.title}`}/>}
         <div><h2>{p.title||'Sem título'}</h2><p>{[p.neighborhood,p.city].filter(Boolean).join(' · ')} · {labels[p.publication_status]}{p.property_status!=='available'&&` · ${labels[p.property_status]}`}</p><small>Atualizado em {new Date(p.updated_at).toLocaleDateString('pt-BR')}</small></div>
-        <Link href={`/admin/imoveis/${p.id}`}>Editar</Link>
+        <Link href={`/admin/imoveis/${p.slug}`}>Editar</Link>
         {p.publication_status==='published'&&p.property_status==='available'&&<Link href={`/imoveis/${p.slug}`} target="_blank" rel="noreferrer">Visualizar</Link>}
       </article>)}</div>}
       <nav className="admin-pagination" aria-label="Páginas de imóveis">
