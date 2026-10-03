@@ -20,6 +20,13 @@
 .real-gallery-thumbs button { position: relative; flex: 0 0 96px; width: 96px; height: 112px; background: #071d33; border: 2px solid transparent; opacity: .7; }
 .real-gallery-thumbs button.is-active { border-color: #b89552; opacity: 1; }
 .real-gallery-thumbs button img { object-fit: cover; }
+.real-videos { padding-top: 58px; }
+.real-videos .eyebrow { color: #a7803f; }
+.real-videos h2 { color: #071d33; margin: 9px 0 25px; }
+.real-videos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 22px; }
+.real-video { background: #071d33; color: #f5f0e7; }
+.real-video video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #071d33; }
+.real-video span { display: block; padding: 13px 16px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
 .real-content { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(310px, .7fr); gap: clamp(60px, 10vw, 170px); padding-top: 80px; padding-bottom: 110px; }
 .real-content .eyebrow { color: #a7803f; }
 .real-content h2 { max-width: 670px; color: #071d33; }
@@ -50,6 +57,7 @@
   .real-gallery-controls button { width: 42px; height: 42px; }
   .real-gallery-thumbs { padding: 9px var(--space) 16px; }
   .real-gallery-thumbs button { flex-basis: 76px; width: 76px; height: 91px; }
+  .real-videos { padding-top: 42px; }
   .real-content { display: flex; flex-direction: column; gap: 42px; padding-top: 60px; padding-bottom: 80px; }
   .real-amenities { grid-template-columns: 1fr; }
   .real-facts { padding: 29px; width: 100%; }

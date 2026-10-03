@@ -32,6 +32,10 @@ Projeto exclusivo criado para Yuri: `yuri-petrou` (`arjffszvxirqkhuycvqw`), na o
 
 Foi aplicada no projeto de produção a migração `allow_review_without_description_or_cover`: envio para revisão/publicação não exige mais descrição com 30 caracteres nem foto de capa. Continuam exigidos título (mínimo de 3 caracteres) e cidade (mínimo de 2), além das verificações de autenticação, aprovação, autoria e demais campos administrativos. A mesma regra está refletida em [setup.sql](./setup.sql) para referência; não reexecute o setup inicial.
 
+## Vídeos — 03/10/2026
+
+[migrations/20261003_property_videos.sql](./migrations/20261003_property_videos.sql) foi aplicado no projeto Yuri. Ele adiciona `property_videos` e o bucket privado `property-videos` (MP4, WEBM e MOV, até 50 MB por arquivo). Os vídeos seguem as permissões de edição e publicação dos imóveis. O painel envia os arquivos em partes retomáveis, permite ordenar e remover, e a página pública mostra somente vídeos de imóveis publicados e disponíveis. Não reexecute o SQL no mesmo projeto.
+
 ## Variáveis
 
 | Nome | Onde | Função |

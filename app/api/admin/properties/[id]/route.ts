@@ -11,9 +11,16 @@ export async function DELETE(_request:NextRequest,{params}:{params:Promise<{id:s
   const {url}=supabaseEnv();const service=createClient(url,secret,{auth:{persistSession:false,autoRefreshToken:false}});
   const {data:images,error:imageError}=await service.from('property_images').select('storage_path,thumbnail_path').eq('property_id',id);
   if(imageError)return NextResponse.json({error:imageError.message},{status:500});
+  const {data:videos,error:videoError}=await service.from('property_videos').select('storage_path').eq('property_id',id);
+  if(videoError)return NextResponse.json({error:videoError.message},{status:500});
   const {error:deleteError}=await service.from('properties').delete().eq('id',id);
   if(deleteError)return NextResponse.json({error:deleteError.message},{status:500});
   const paths=(images||[]).flatMap(image=>[image.storage_path,image.thumbnail_path]);
-  if(paths.length){const {error:storageError}=await service.storage.from('property-images').remove(paths);if(storageError)return NextResponse.json({ok:true,warning:'Imóvel excluído, mas algumas fotos órfãs exigem limpeza no Storage.'})}
+  const videoPaths=(videos||[]).map(video=>video.storage_path);
+  const [photoCleanup,videoCleanup]=await Promise.all([
+    paths.length?service.storage.from('property-images').remove(paths):Promise.resolve({error:null}),
+    videoPaths.length?service.storage.from('property-videos').remove(videoPaths):Promise.resolve({error:null})
+  ]);
+  if(photoCleanup.error||videoCleanup.error)return NextResponse.json({ok:true,warning:'Imóvel excluído, mas alguns arquivos órfãos exigem limpeza no Storage.'});
   return NextResponse.json({ok:true});
 }

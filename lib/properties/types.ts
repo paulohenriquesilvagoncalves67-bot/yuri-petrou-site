@@ -9,4 +9,5 @@ export interface DbProperty {
  created_by:string; created_at:string; updated_at:string; published_at:string|null;
 }
 export interface DbImage { id:string; property_id:string; storage_path:string; thumbnail_path:string; position:number; is_cover:boolean; alt_text:string; sha256:string; created_at:string }
+export interface DbVideo { id:string; property_id:string; storage_path:string; content_type:string; byte_size:number; position:number; sha256:string; created_at:string }
 export interface Profile {id:string;email:string;name:string;role:'admin'|'contributor';approved:boolean}

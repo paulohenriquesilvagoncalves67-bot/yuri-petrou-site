@@ -2,3 +2,4 @@
 .admin-row-cover{width:92px;height:75px;object-fit:cover;flex:none}
 .admin-pagination{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:28px;font-size:14px}.admin-pagination a{text-decoration:underline;text-underline-offset:4px}
 .admin-shell a.admin-button{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:44px;color:#fff;white-space:nowrap}
+.admin-videos{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:14px}.admin-video{background:#fff;border:1px solid #ddd;padding:8px}.admin-video video{display:block;width:100%;aspect-ratio:16/9;background:#10263d}.admin-video small{display:block;margin:10px 0 6px;color:#687587}.admin-video button{font-size:12px;padding:6px;background:#f4f0e8;color:#10263d;border:1px solid #d8c8a8;margin:4px 4px 0 0}.admin-video button:disabled{opacity:.5}

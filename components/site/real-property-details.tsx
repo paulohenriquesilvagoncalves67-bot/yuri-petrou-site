@@ -9,7 +9,8 @@ import { track } from './links';
 
 export function RealPropertyDetails({ p, l }: { p: Property; l: Locale }) {
   const [index, setIndex] = useState(0);
-  const count = p.images.length;
+  const galleryImages = p.images.length ? p.images : [p.coverImage];
+  const count = galleryImages.length;
   const location = p.location?.[l] || 'Armação dos Búzios';
 
   useEffect(() => {
@@ -34,17 +35,17 @@ export function RealPropertyDetails({ p, l }: { p: Property; l: Locale }) {
         </div>
       </div>
 
-      <div className={`real-gallery ${p.galleryLayout === 'mixed' && !p.images[index].includes('-vertical.') ? 'real-gallery--landscape' : ''}`} aria-label={tr(l, 'Fotos da residência', 'Photos of the home')}>
+      <div className={`real-gallery ${p.galleryLayout === 'mixed' && !galleryImages[index].includes('-vertical.') ? 'real-gallery--landscape' : ''}`} aria-label={tr(l, 'Fotos da residência', 'Photos of the home')}>
         <div className="real-gallery-stage">
           <Image
-            key={p.images[index]}
-            src={p.images[index]}
+            key={galleryImages[index]}
+            src={galleryImages[index]}
             alt={p.imageAltTexts?.[index]||`${p.title[l]} — ${tr(l, 'foto', 'photo')} ${index + 1} ${tr(l, 'de', 'of')} ${count}`}
             fill
             sizes="(max-width: 760px) 100vw, 85vw"
             className="real-gallery-main"
             priority={index === 0}
-            unoptimized={p.images[index].startsWith('http')}
+            unoptimized={galleryImages[index].startsWith('http')}
           />
           <div className="real-gallery-controls">
             <button type="button" onClick={() => changeImage(index - 1)} aria-label={tr(l, 'Foto anterior', 'Previous photo')}>
@@ -57,7 +58,7 @@ export function RealPropertyDetails({ p, l }: { p: Property; l: Locale }) {
           </div>
         </div>
         <div className="real-gallery-thumbs" aria-label={tr(l, 'Escolher foto', 'Choose photo')}>
-          {p.images.map((src, photoIndex) => (
+          {galleryImages.map((src, photoIndex) => (
             <button
               type="button"
               key={src}
@@ -71,6 +72,18 @@ export function RealPropertyDetails({ p, l }: { p: Property; l: Locale }) {
           ))}
         </div>
       </div>
+
+      {!!p.videos?.length && <section className="real-videos real-listing-inner" aria-label={tr(l, 'Vídeos da residência', 'Videos of the home')}>
+        <p className="eyebrow">{tr(l, 'EM MOVIMENTO', 'IN MOTION')}</p>
+        <h2>{tr(l, 'Conheça a casa em vídeo', 'Explore the home on video')}</h2>
+        <div className="real-videos-grid">{p.videos.map((video, videoIndex) => <div className="real-video" key={video.url}>
+          <video controls playsInline preload="metadata" aria-label={`${tr(l, 'Vídeo', 'Video')} ${videoIndex + 1} — ${p.title[l]}`}>
+            <source src={video.url} type={video.contentType} />
+            {tr(l, 'Seu navegador não reproduz este vídeo.', 'Your browser cannot play this video.')}
+          </video>
+          <span>{tr(l, 'Vídeo', 'Video')} {String(videoIndex + 1).padStart(2, '0')}</span>
+        </div>)}</div>
+      </section>}
 
       <div className="real-listing-inner real-content">
         <div>
