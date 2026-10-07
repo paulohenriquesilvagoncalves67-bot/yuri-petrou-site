@@ -4,5 +4,9 @@ import {getPublicProperties} from '@/lib/properties/public';
 export const dynamic='force-dynamic';
 export default async function sitemap():Promise<MetadataRoute.Sitemap>{
   const properties=await getPublicProperties();
-  return (['pt','en'] as const).flatMap(l=>['','imoveis','sobre-yuri','anuncie-seu-imovel','contato',...properties.map(p=>'imoveis/'+p.slug)].map(p=>({url:config.origin+route(l,p)})));
+  const paths=['','imoveis','sobre-yuri','anuncie-seu-imovel','contato',...properties.map(p=>'imoveis/'+p.slug)];
+  return paths.flatMap(path=>(['pt','en'] as const).map(l=>({
+    url:config.origin+route(l,path),
+    alternates:{languages:{'pt-BR':config.origin+route('pt',path),en:config.origin+route('en',path)}},
+  })));
 }

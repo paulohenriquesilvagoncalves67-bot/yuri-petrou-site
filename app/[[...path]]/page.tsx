@@ -12,13 +12,24 @@ import {supabaseConfigured} from '@/lib/supabase/config';
 
 export const dynamic='force-dynamic';
 function resolve(path:string[]=[]){const l:Locale=path[0]==='en'?'en':'pt';return {l,parts:path[0]==='en'||path[0]==='pt'?path.slice(1):path}}
+const pageSeo:Record<string,{pt:[string,string];en:[string,string]}>= {
+  '':{pt:['Imóveis à venda em Armação dos Búzios','Encontre casas selecionadas à venda em Armação dos Búzios. Conheça os imóveis e conte com o atendimento pessoal de Yuri Petrou.'],en:['Homes for sale in Búzios','Explore selected homes for sale in Armação dos Búzios, Brazil, with personal service from Yuri Petrou.']},
+  imoveis:{pt:['Casas e imóveis à venda em Búzios','Explore casas e imóveis selecionados à venda em Armação dos Búzios. Veja fotos, características e detalhes de cada propriedade.'],en:['Homes and properties for sale in Búzios','Browse selected homes for sale in Armação dos Búzios, Brazil. View photos, features and property details.']},
+  'sobre-yuri':{pt:['Sobre Yuri Petrou','Conheça Yuri Petrou e sua atuação no mercado imobiliário de Armação dos Búzios.'],en:['About Yuri Petrou','Learn about Yuri Petrou and his work in the Armação dos Búzios property market.']},
+  'anuncie-seu-imovel':{pt:['Anuncie seu imóvel em Búzios','Apresente seu imóvel em Armação dos Búzios para avaliação e saiba como anunciá-lo com Yuri Petrou.'],en:['List your property in Búzios','Present your Armação dos Búzios property for review and learn how to list it with Yuri Petrou.']},
+  contato:{pt:['Contato | Imóveis em Búzios','Entre em contato com Yuri Petrou para conversar sobre imóveis à venda em Armação dos Búzios.'],en:['Contact | Búzios properties','Contact Yuri Petrou to discuss homes for sale in Armação dos Búzios, Brazil.']},
+};
 export async function generateMetadata({params}:{params:Promise<{path?:string[]}>}):Promise<Metadata>{
   const {l,parts}=resolve((await params).path);
-  const p=parts[0]==='imoveis'&&parts[1]?await getPublicProperty(parts[1]):undefined;
-  const names:Record<string,string>={imoveis:tr(l,'Imóveis em Búzios','Properties in Búzios'),'sobre-yuri':tr(l,'Conheça Yuri','Meet Yuri'),'anuncie-seu-imovel':tr(l,'Anuncie seu imóvel','List your property'),contato:tr(l,'Contato','Contact'),regioes:regions.find(r=>r.slug===parts[1])?.name||'Búzios'};
-  const title=p?.seoTitle||p?.title[l]||names[parts[0]]||tr(l,'Conectando pessoas a paraísos','Connecting people to paradise');
-  const description=p?.seoDescription||p?.description[l]||tr(l,'Imóveis selecionados, atendimento pessoal e a experiência de viver em Búzios.','Selected properties, personal service and the experience of living in Búzios.');
-  return {title:`${title} | Yuri Petrou`,description,alternates:{canonical:config.origin+route(l,parts.join('/')),languages:{'pt-BR':config.origin+route('pt',parts.join('/')),en:config.origin+route('en',parts.join('/'))}},openGraph:{title,description,images:p?.coverImage?[{url:p.coverImage.startsWith('http')?p.coverImage:config.origin+p.coverImage}]:undefined,type:'website',locale:l==='pt'?'pt_BR':'en_US'},robots:config.demo&&!supabaseConfigured?{index:false,follow:false}:{index:true,follow:true}};
+  const path=parts.join('/');
+  const p=parts[0]==='imoveis'&&parts.length===2?await getPublicProperty(parts[1]):undefined;
+  const region=parts[0]==='regioes'&&parts.length===2?regions.find(r=>r.slug===parts[1]):undefined;
+  const staticSeo=pageSeo[path]?.[l];
+  const title=p?(l==='pt'&&p.seoTitle?p.seoTitle:p.title[l]):region?tr(l,`Imóveis em ${region.name}, Búzios`,`Properties in ${region.name}, Búzios`):staticSeo?.[0]||'';
+  const description=p?(l==='pt'&&p.seoDescription?p.seoDescription:p.shortDescription[l]):region?tr(l,`Conheça os imóveis disponíveis em ${region.name}, Armação dos Búzios.`,`Explore available properties in ${region.name}, Armação dos Búzios.`):staticSeo?.[1]||'';
+  const fullTitle=title.toLowerCase().includes('yuri petrou')?title:`${title} | Yuri Petrou`;
+  const canonical=config.origin+route(l,path);
+  return {title:fullTitle,description,alternates:{canonical,languages:{'pt-BR':config.origin+route('pt',path),en:config.origin+route('en',path),'x-default':config.origin+route('pt',path)}},openGraph:{title:fullTitle,description,url:canonical,siteName:'Yuri Petrou',images:[{url:config.origin+config.hero,alt:'Armação dos Búzios'}],type:'website',locale:l==='pt'?'pt_BR':'en_US'},twitter:{card:'summary_large_image',title:fullTitle,description,images:[config.origin+config.hero]},robots:config.demo&&!supabaseConfigured?{index:false,follow:false}:{index:true,follow:true}};
 }
 export default async function Page({params}:{params:Promise<{path?:string[]}>}){
   const {l,parts}=resolve((await params).path);const path=parts.join('/');
