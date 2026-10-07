@@ -20,7 +20,7 @@ export function PropertyEditor({profile,initial,initialImages=[],initialVideos=[
  const router=useRouter();const admin=profile.role==='admin';const [form,setForm]=useState<Form>(()=>initialForm(initial));const [id,setId]=useState(initial?.id||'');const [status,setStatus]=useState<PublicationStatus>(initial?.publication_status||'draft');const [photos,setPhotos]=useState(initialImages);const [videos,setVideos]=useState(initialVideos);const [busy,setBusy]=useState(false);const [message,setMessage]=useState('');const [error,setError]=useState('');const [progress,setProgress]=useState('');
  const update=<K extends keyof Form>(key:K,value:Form[K])=>setForm(prev=>({...prev,[key]:value}));
  const db=browserClient();
- async function save(nextStatus?:PublicationStatus):Promise<string|null>{setBusy(true);setError('');setMessage('');try{
+ async function save(nextStatus?:PublicationStatus,refresh=true):Promise<string|null>{setBusy(true);setError('');setMessage('');try{
   const payload={title:form.title.trim(),title_en:form.title_en.trim(),slug:id?(admin?slugify(form.slug):form.slug):(admin&&form.slug?slugify(form.slug):`${slugify(form.title)||'imovel'}-${crypto.randomUUID().slice(0,8)}`),description:form.description.trim(),description_en:form.description_en.trim(),short_description:form.short_description.trim(),property_type:form.property_type.trim(),purpose:form.purpose,neighborhood:form.neighborhood.trim(),city:form.city.trim(),bedrooms:Number(form.bedrooms),suites:Number(form.suites),bathrooms:Number(form.bathrooms),parking_spaces:Number(form.parking_spaces),area:form.area?Number(form.area):null,land_area:form.land_area?Number(form.land_area):null,features:form.features.split('\n').map(s=>s.trim()).filter(Boolean),property_status:form.property_status,...(admin?{featured:form.featured,seo_title:form.seo_title||null,seo_description:form.seo_description||null,review_note:form.review_note||null}:{})};
   if((nextStatus==='pending_review'||nextStatus==='published')&&(payload.title.length<3||payload.city.length<2))throw Error('Para enviar ou publicar, informe um título e uma cidade.');
   if(!payload.title)throw Error('Informe o nome do imóvel para continuar.');
@@ -28,10 +28,65 @@ export function PropertyEditor({profile,initial,initialImages=[],initialVideos=[
   if(id){const {error}=await db.from('properties').update({...payload,...(nextStatus?{publication_status:nextStatus}:{})}).eq('id',id);if(error)throw error}
   else {const {data:{user},error:sessionError}=await db.auth.getUser();if(sessionError)throw sessionError;if(!user)throw new Error('Sua sessão expirou. Entre novamente no painel para continuar.');if(user.id!==profile.id)throw new Error('A sessão ativa não corresponde ao perfil carregado. Atualize a página e entre novamente no painel.');propertyId=crypto.randomUUID();const {error}=await db.from('properties').insert({id:propertyId,...payload,publication_status:'draft',created_by:user.id});if(error)throw error;setId(propertyId);setForm(prev=>({...prev,slug:payload.slug}));history.replaceState(null,'',`/admin/imoveis/${payload.slug}`)}
   if(nextStatus&&nextStatus!=='draft'&&!id){const {error}=await db.from('properties').update({publication_status:nextStatus}).eq('id',propertyId);if(error)throw error}
-  if(nextStatus)setStatus(nextStatus);setMessage(nextStatus==='pending_review'?'Imóvel enviado para revisão':nextStatus==='published'?'Imóvel publicado':nextStatus==='rejected'?'Imóvel rejeitado':'Rascunho salvo automaticamente');router.refresh();return propertyId;
+  if(nextStatus)setStatus(nextStatus);setMessage(nextStatus==='pending_review'?'Imóvel enviado para revisão':nextStatus==='published'?'Imóvel publicado':nextStatus==='rejected'?'Imóvel rejeitado':'Rascunho salvo automaticamente');if(refresh)router.refresh();return propertyId;
  }catch(caught){setError(saveErrorMessage(caught));return null}finally{setBusy(false)}}
  async function setPropertyStatus(value:PropertyStatus){if(!id){update('property_status',value);return}setBusy(true);setError('');const {error}=await db.from('properties').update({property_status:value}).eq('id',id);setBusy(false);if(error){setError(error.message);return}update('property_status',value);setMessage('Situação do imóvel atualizada.');router.refresh()}
- async function upload(files:File[]){if(!files.length)return;if(status==='published'){setError('Envie o imóvel para revisão antes de alterar as fotos.');return}setError('');let propertyId=id;if(!propertyId){propertyId=await save('draft')||'';if(!propertyId)return}setBusy(true);let current=[...photos];try{for(let index=0;index<files.length;index++){const file=files[index];setProgress(`Enviando foto ${index+1} de ${files.length}…`);if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>15*1024*1024)throw Error(`${file.name}: use JPG, PNG ou WEBP de até 15 MB.`);const sha256=await digest(file);if(current.some(p=>p.sha256===sha256))continue;const full=await optimized(file,1800,.84),thumb=await optimized(file,640,.77);const base=`${propertyId}/${crypto.randomUUID()}`;const path=`${base}.webp`,small=`${base}-thumb.webp`;const bucket=db.storage.from('property-images');const first=await bucket.upload(path,full,{contentType:'image/webp',upsert:false});if(first.error)throw first.error;const second=await bucket.upload(small,thumb,{contentType:'image/webp',upsert:false});if(second.error){await bucket.remove([path]);throw second.error}const {data,error}=await db.from('property_images').insert({property_id:propertyId,storage_path:path,thumbnail_path:small,sha256,position:current.length,is_cover:current.length===0,alt_text:`${form.title} — foto ${current.length+1}`}).select('*').single();if(error){await bucket.remove([path,small]);throw error}const {data:signed}=await bucket.createSignedUrl(small,3600);current=[...current,{...(data as DbImage),preview:signed?.signedUrl||URL.createObjectURL(thumb)}];setPhotos(current)}}catch(caught){setError(caught instanceof Error?caught.message:'Upload falhou. As fotos já enviadas foram mantidas.')}finally{setBusy(false);setProgress('');router.refresh()}}
+ async function upload(files:File[]){
+  if(!files.length)return;
+  if(status==='published'){setError('Envie o imóvel para revisão antes de alterar as fotos.');return}
+  setError('');
+  let propertyId=id;
+  if(!propertyId){propertyId=await save('draft',false)||'';if(!propertyId)return}
+  setBusy(true);
+  const bucket=db.storage.from('property-images');
+  let current=[...photos];
+  try{
+   const {data:stored,error:loadError}=await db.from('property_images').select('*').eq('property_id',propertyId).order('position');
+   if(loadError)throw loadError;
+   const previews=new Map(current.map(photo=>[photo.id,photo.preview]));
+   current=await Promise.all(((stored||[]) as DbImage[]).map(async photo=>{
+    const preview=previews.get(photo.id);
+    if(preview)return {...photo,preview};
+    const {data:signed}=await bucket.createSignedUrl(photo.thumbnail_path,3600);
+    return {...photo,preview:signed?.signedUrl||''};
+   }));
+   setPhotos(current);
+   let added=0;
+   let skipped=0;
+   for(let index=0;index<files.length;index++){
+    const file=files[index];
+    setProgress(`Enviando foto ${index+1} de ${files.length}…`);
+    if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>15*1024*1024)
+     throw Error(`${file.name}: use JPG, PNG ou WEBP de até 15 MB.`);
+    const sha256=await digest(file);
+    if(current.some(photo=>photo.sha256===sha256)){skipped++;continue}
+    const full=await optimized(file,1800,.84);
+    const thumb=await optimized(file,640,.77);
+    const base=`${propertyId}/${crypto.randomUUID()}`;
+    const path=`${base}.webp`,small=`${base}-thumb.webp`;
+    const first=await bucket.upload(path,full,{contentType:'image/webp',upsert:false});
+    if(first.error)throw first.error;
+    const second=await bucket.upload(small,thumb,{contentType:'image/webp',upsert:false});
+    if(second.error){await bucket.remove([path]);throw second.error}
+    const position=current.length?Math.max(...current.map(photo=>photo.position))+1:0;
+    const {data,error}=await db.from('property_images').insert({
+     property_id:propertyId,storage_path:path,thumbnail_path:small,sha256,
+     position,is_cover:!current.some(photo=>photo.is_cover),
+     alt_text:`${form.title} — foto ${current.length+1}`
+    }).select('*').single();
+    if(error){await bucket.remove([path,small]);throw error}
+    const {data:signed}=await bucket.createSignedUrl(small,3600);
+    current=[...current,{...(data as DbImage),preview:signed?.signedUrl||URL.createObjectURL(thumb)}];
+    setPhotos(current);
+    added++;
+   }
+   setMessage(added?`${added} foto${added===1?'':'s'} enviada${added===1?'':'s'}.${skipped? ` ${skipped} duplicada${skipped===1?'':'s'} ignorada${skipped===1?'':'s'}.`:''}`:skipped?'As fotos selecionadas já estão neste imóvel.':'Nenhuma foto foi enviada.');
+  }catch(caught){
+   setError(caught instanceof Error?caught.message:'Upload falhou. As fotos já enviadas foram mantidas.');
+  }finally{
+   setBusy(false);setProgress('');router.refresh();
+  }
+ }
  async function uploadVideos(files:File[]){if(!files.length)return;if(status==='published'){setError('Envie o imóvel para revisão antes de alterar os vídeos.');return}setError('');let propertyId=id;if(!propertyId){propertyId=await save('draft')||'';if(!propertyId)return}setBusy(true);let current=[...videos];try{const {data:{session},error:sessionError}=await db.auth.getSession();if(sessionError||!session)throw Error('Sua sessão expirou. Entre novamente no painel.');for(let index=0;index<files.length;index++){const file=files[index];const contentType=videoType(file);if(!contentType||!file.size||file.size>50*1024*1024)throw Error(`${file.name}: use MP4, WEBM ou MOV de até 50 MB.`);setProgress(`Preparando vídeo ${index+1} de ${files.length}…`);const sha256=await digest(file);if(current.some(v=>v.sha256===sha256))continue;const extension=contentType==='video/mp4'?'mp4':contentType==='video/webm'?'webm':'mov';const path=`${propertyId}/${sha256}.${extension}`;await new Promise<void>((resolve,reject)=>{const task=new tus.Upload(file,{endpoint:videoEndpoint(),headers:{authorization:`Bearer ${session.access_token}`},metadata:{bucketName:'property-videos',objectName:path,contentType,cacheControl:'3600'},chunkSize:6*1024*1024,retryDelays:[0,3000,5000,10000,20000],uploadDataDuringCreation:true,removeFingerprintOnSuccess:true,fingerprint:async()=>`yuri-property-video-${propertyId}-${sha256}`,onProgress:(sent,total)=>setProgress(`Enviando vídeo ${index+1} de ${files.length} · ${Math.round(sent/total*100)}%`),onError:reject,onSuccess:()=>resolve()});void task.findPreviousUploads().then(previous=>{if(previous.length)task.resumeFromPreviousUpload(previous[0]);task.start()}).catch(reject)});const bucket=db.storage.from('property-videos');const {data,error}=await db.from('property_videos').insert({property_id:propertyId,storage_path:path,content_type:contentType,byte_size:file.size,sha256,position:current.length}).select('*').single();if(error){await bucket.remove([path]);throw error}const {data:signed,error:signError}=await bucket.createSignedUrl(path,86400);if(signError||!signed?.signedUrl)throw Error('Vídeo salvo, mas não foi possível abrir a prévia. Atualize a página.');current=[...current,{...(data as DbVideo),preview:signed.signedUrl}];setVideos(current)}setMessage('Vídeo enviado com sucesso.')}catch(caught){setError(caught instanceof Error?caught.message:'O upload do vídeo falhou. Os vídeos anteriores foram mantidos.')}finally{setBusy(false);setProgress('');router.refresh()}}
  async function moveVideo(video:EditorVideo,direction:number){const from=videos.findIndex(v=>v.id===video.id),to=from+direction;if(to<0||to>=videos.length)return;const copy=[...videos];[copy[from],copy[to]]=[copy[to],copy[from]];setBusy(true);for(let i=0;i<copy.length;i++){const {error}=await db.from('property_videos').update({position:i}).eq('id',copy[i].id);if(error){setError(error.message);setBusy(false);return}}setVideos(copy.map((v,i)=>({...v,position:i})));setBusy(false);setMessage('Ordem dos vídeos salva.')}
  async function removeVideo(video:EditorVideo){if(!confirm('Remover este vídeo?'))return;setBusy(true);const {error}=await db.from('property_videos').delete().eq('id',video.id);if(error){setError(error.message);setBusy(false);return}const {error:storageError}=await db.storage.from('property-videos').remove([video.storage_path]);setVideos(videos.filter(v=>v.id!==video.id));setBusy(false);setMessage(storageError?'Vídeo removido do anúncio; a limpeza do arquivo precisa de atenção.':'Vídeo removido.')}
