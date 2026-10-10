@@ -25,7 +25,7 @@ Projeto exclusivo criado para Yuri: `yuri-petrou` (`arjffszvxirqkhuycvqw`), na o
    Confirme que exatamente uma linha foi atualizada. O perfil é criado pelo trigger de `auth.users`.
 5. Copie `.env.example` para `.env.local` e preencha `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` e `SUPABASE_SECRET_KEY`. A chave secreta **nunca** deve ter prefixo `NEXT_PUBLIC_` nem ser enviada ao Git.
 6. No Vercel, as mesmas três variáveis já estão em Production. Configure também em Preview apenas se precisar testar prévias. O catálogo público lê exclusivamente o Supabase e novos imóveis aparecem sem deploy.
-7. O script `node scripts/import-real-properties.mjs` foi usado para a importação inicial e pode ser repetido sem duplicar imagens. Ele não importa os dez anúncios demonstrativos. Os arquivos locais permanecem intactos.
+7. O script `node scripts/import-real-properties.mjs` foi usado para a importação inicial e pode ser repetido sem duplicar imagens. Ele importa somente os dois imóveis reais mantidos nos módulos de origem.
 8. Entre em `/admin/login`. Em `/admin/usuarios`, convide Yuri pelo e-mail. Após o convite e a definição de senha, aprove o perfil dele nessa tela. Ele entra em `/admin/imoveis`, sem acesso a revisão ou usuários.
 
 ## Ajuste temporário — 27/09/2026

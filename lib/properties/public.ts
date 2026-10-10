@@ -1,7 +1,7 @@
 import 'server-only';
 import {cache} from 'react';
 import { createClient } from '@supabase/supabase-js';
-import { properties as legacyProperties, type Property } from '@/data/properties';
+import type { Property } from '@/data/properties';
 import { supabaseConfigured, supabaseEnv } from '@/lib/supabase/config';
 import type {DbImage,DbProperty,DbVideo} from './types';
 
@@ -37,7 +37,7 @@ async function mapProperty(row:DbProperty, images:DbImage[], client:ReturnType<t
     featured:row.featured,status:'available',seoTitle:row.seo_title||undefined,seoDescription:row.seo_description||undefined};
 }
 export const getPublicProperties=cache(async function getPublicProperties():Promise<Property[]> {
-  if(!supabaseConfigured) return legacyProperties;
+  if(!supabaseConfigured) return [];
   const client=publicClient();
   const {data:rows,error}=await client.from('published_properties').select('*').order('featured',{ascending:false}).order('published_at',{ascending:false});
   if(error) throw new Error(`Não foi possível carregar os imóveis: ${error.message}`);
@@ -48,7 +48,7 @@ export const getPublicProperties=cache(async function getPublicProperties():Prom
   return Promise.all((rows as DbProperty[]).map(p=>mapProperty(p,(images||[]).filter(i=>i.property_id===p.id) as DbImage[],client)));
 });
 export const getPublicProperty=cache(async function getPublicProperty(slug:string):Promise<Property|undefined>{
-  if(!supabaseConfigured)return legacyProperties.find(p=>p.slug===slug);
+  if(!supabaseConfigured)return undefined;
   const client=publicClient();
   const {data:row,error}=await client.from('published_properties').select('*').eq('slug',slug).maybeSingle();
   if(error)throw new Error(`Não foi possível carregar o imóvel: ${error.message}`);
