@@ -64,6 +64,8 @@ export function HeroCarousel({ l }: { l: Locale }) {
     },
   });
   const [active, setActive] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const language = l === 'en' ? 1 : 0;
   const scene = scenes[active];
 
@@ -78,6 +80,21 @@ export function HeroCarousel({ l }: { l: Locale }) {
       api.off('reInit', update);
     };
   }, [api]);
+
+  useEffect(() => {
+    if (
+      !api ||
+      isHovered ||
+      isFocused ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) return;
+
+    const interval = window.setInterval(() => {
+      if (document.visibilityState === 'visible') api.scrollNext();
+    }, 7000);
+
+    return () => window.clearInterval(interval);
+  }, [active, api, isFocused, isHovered]);
 
   useEffect(() => {
     const section = document.getElementById('selecionados');
@@ -109,6 +126,14 @@ export function HeroCarousel({ l }: { l: Locale }) {
       aria-label={tr(l, 'Paisagens de Búzios', 'Búzios landscapes')}
       aria-roledescription={tr(l, 'carrossel', 'carousel')}
       tabIndex={0}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsFocused(true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setIsFocused(false);
+        }
+      }}
       onKeyDown={(event) => {
         if (event.target !== event.currentTarget) return;
         if (event.key === 'ArrowRight') {
@@ -167,11 +192,17 @@ export function HeroCarousel({ l }: { l: Locale }) {
         <a className="yp-discover" href="#selecionados"><SiteArrow direction="down" />{tr(l, 'Descubra seu próximo capítulo', 'Discover your next chapter')}</a>
         <div className="yp-navigation">
           <span className="yp-place">Armação dos Búzios · RJ</span>
-          <div className="yp-controls">
-            <button type="button" onClick={() => api?.scrollPrev()} aria-label={tr(l, 'Foto anterior', 'Previous photo')}><SiteArrow direction="left" /></button>
-            <span className="yp-counter" aria-live="polite" aria-atomic="true">{String(active + 1).padStart(2, '0')} / 03</span>
-            <div className="yp-progress" aria-hidden="true"><span style={{ transform: `translateX(${active * 100}%)` }} /></div>
-            <button type="button" onClick={() => api?.scrollNext()} aria-label={tr(l, 'Próxima foto', 'Next photo')}><SiteArrow /></button>
+          <div className="yp-controls" role="group" aria-label={tr(l, 'Escolher imagem de abertura', 'Choose the opening image')}>
+            {scenes.map((item, index) => (
+              <button
+                className={`yp-dot ${active === index ? 'is-active' : ''}`}
+                type="button"
+                key={item.image}
+                onClick={() => api?.scrollTo(index)}
+                aria-label={tr(l, `Ir para imagem ${index + 1}`, `Go to image ${index + 1}`)}
+                aria-current={active === index ? 'true' : undefined}
+              />
+            ))}
           </div>
         </div>
       </div>
