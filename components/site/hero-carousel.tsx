@@ -91,7 +91,7 @@ export function HeroCarousel({ l }: { l: Locale }) {
 
     const interval = window.setInterval(() => {
       if (document.visibilityState === 'visible') api.scrollNext();
-    }, 7000);
+    }, 4500);
 
     return () => window.clearInterval(interval);
   }, [active, api, isFocused, isHovered]);
